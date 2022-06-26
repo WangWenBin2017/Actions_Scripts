@@ -1,0 +1,44 @@
+name: 'H-Auto'
+
+on:
+   push:
+   schedule:
+
+       - cron: '30 4 */2 * *'
+
+   
+   workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: macos-12
+    timeout-minutes: 10
+
+    steps:
+        - name: 'Clone codes from repository'
+          uses: actions/checkout@v2
+          with: 
+            repository: WangWenBin2017/IPv6-Servers
+            token: ${{ secrets.GIT_TOKEN }}
+          
+        - name: 'Update Chrome'           
+          run: |
+            brew reinstall --cask google-chrome
+            
+        - name: 'Install requirements'
+          run: |
+            pip3 install -r ./requirements.txt
+            pip3 install undetected-chromedriver
+            yes | pip3 uninstall selenium
+            pip3 install selenium==4.2.0
+            
+        - name: 'Build testing'
+          env:
+            USER_ID: ${{ secrets.H_USER_ID }}
+            PASS_WD: ${{ secrets.H_PASS_WD }}
+            BARK_KEY: ${{ secrets.BARK_KEY }}
+            TG_BOT_TOKEN: ${{ secrets.TG_BOT_TOKEN }}
+            TG_USER_ID: ${{ secrets.TG_USER_ID }}
+
+          run: |
+            python3 ./main-h_mask.py

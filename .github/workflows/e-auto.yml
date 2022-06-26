@@ -1,0 +1,40 @@
+name: 'E-Auto'
+
+on:
+   push:
+   schedule:
+
+       - cron: '30 21 11 * *'
+
+   
+   workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: windows-latest
+    timeout-minutes: 10
+
+    steps:
+        - name: 'Clone codes from repository'
+          uses: actions/checkout@v3
+          with: 
+            repository: WangWenBin2017/IPv6-Servers
+            token: ${{ secrets.GIT_TOKEN }}
+        
+        - name: 'Install requirements'
+          run: |
+            python3 -m pip install -r ./requirements.txt
+#            python3 -m pip install --upgrade pip
+        - name: 'Build testing'
+          env:
+            USER_ID: ${{ secrets.E_USER_ID }}
+            PASS_WD: ${{ secrets.E_PASS_WD }}
+            TC_USER_ID: ${{ secrets.TC_USER_ID }}
+            TC_APIKEY: ${{ secrets.TC_APIKEY }}
+            MAILPARSER: ${{ secrets.MAILPARSER }}
+            BARK_KEY: ${{ secrets.BARK_KEY }}
+            TG_BOT_TOKEN: ${{ secrets.TG_BOT_TOKEN }}
+            TG_USER_ID: ${{ secrets.TG_USER_ID }}
+            
+          run: |
+            python3 ./main-e_mask.py
